@@ -1,12 +1,14 @@
 package net.craftminecraft.bukkit.hubcloak;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import net.craftminecraft.bukkit.hubcloak.metadatas.SwitchMetadata;
 import net.craftminecraft.bukkit.hubcloak.metadatas.TimestampMetadata;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +28,7 @@ public class HubCloak extends JavaPlugin implements Listener {
         
         for (Player p : getServer().getOnlinePlayers()) {
             p.setMetadata(CLOAKOTHERS, new SwitchMetadata(this, false));
-            p.setMetadata(ANTISPAM, new TimestampMetadata(this, getConfig().getLong("anti_spam_interval") * 20, false));
+            p.setMetadata(ANTISPAM, new TimestampMetadata(this, getConfig().getLong("anti_spam_interval"), TimeUnit.MILLISECONDS, false));
         }
         
         getServer().getPluginManager().registerEvents(this, this);
@@ -43,7 +45,7 @@ public class HubCloak extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent ev) {
         ev.getPlayer().setMetadata(CLOAKOTHERS, new SwitchMetadata(this, false));
-        ev.getPlayer().setMetadata(ANTISPAM, new TimestampMetadata(this, getConfig().getLong("anti_spam_interval") * 20, false));
+        ev.getPlayer().setMetadata(ANTISPAM, new TimestampMetadata(this, getConfig().getLong("anti_spam_interval"), TimeUnit.SECONDS, false));
         updateOtherCloak(ev.getPlayer());
         
         if(!ev.getPlayer().getInventory().contains(getConfig().getInt("item_id"))) {
@@ -56,6 +58,14 @@ public class HubCloak extends JavaPlugin implements Listener {
             item.setItemMeta(itemmeta);
             ev.getPlayer().getInventory().addItem(new ItemStack[]{item});
             ev.getPlayer().updateInventory();
+        }
+    }
+    
+    @EventHandler
+    public void onItemDrop(PlayerDropItemEvent ev) {
+        if (ev.getItemDrop().getItemStack().getTypeId()== getConfig().getInt("item_id")) {
+            ev.setCancelled(true);
+            ev.getPlayer().sendMessage("drop_msg");
         }
     }
     

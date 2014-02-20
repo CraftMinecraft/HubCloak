@@ -2,6 +2,7 @@
  */
 package net.craftminecraft.bukkit.hubcloak.metadatas;
 
+import java.util.concurrent.TimeUnit;
 import org.bukkit.metadata.MetadataValueAdapter;
 import org.bukkit.plugin.Plugin;
 
@@ -12,10 +13,10 @@ import org.bukkit.plugin.Plugin;
 public class TimestampMetadata extends MetadataValueAdapter {
     private long timeout;
     private long current;
-
-    public TimestampMetadata(Plugin p, long timeout, boolean startNow) {
+    
+    public TimestampMetadata(Plugin p, long timeout, TimeUnit unit, boolean startNow) {
         super(p);
-        this.timeout = timeout;
+        this.timeout = unit.convert(timeout, unit);
         this.current = startNow ? timeout + System.currentTimeMillis() : 0;
     }
 
