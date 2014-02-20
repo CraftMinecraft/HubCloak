@@ -22,6 +22,8 @@ public class HubCloak extends JavaPlugin implements Listener {
     public static final String ANTISPAM = "hubcloak.antispam";
     
     public void onEnable() {
+        this.saveDefaultConfig();
+        
         for (Player p : getServer().getOnlinePlayers()) {
             p.setMetadata(CLOAKOTHERS, new SwitchMetadata(this, false));
             p.setMetadata(ANTISPAM, new TimestampMetadata(this, getConfig().getLong("anti_spam_interval") * 20, false));
@@ -62,7 +64,8 @@ public class HubCloak extends JavaPlugin implements Listener {
    }
     
     private void toggleOtherCloak(Player p) {
-        if (p.getMetadata(ANTISPAM).get(0).asBoolean()) {
+        // Don't spamzor
+        if (!p.getMetadata(ANTISPAM).get(0).asBoolean()) {
             p.sendMessage(colorize(getConfig().getString("anti_spam_msg")));
             return;
         }
