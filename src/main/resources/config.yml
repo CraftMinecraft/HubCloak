@@ -6,7 +6,6 @@ item_id: 347
 item_on_join: false
 item_name: ~6Magic Clock
 item_lore: ~4Right click to toggle the clock.
-exempt_with_perm: false
 reminder_msg: false
 reminder_interval: 30
 reminder_msg_on: ~6All players are currently vanished.
